@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rehamessam.trade/sitemap.xml

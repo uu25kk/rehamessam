@@ -31,3 +31,23 @@ let mx=innerWidth/2,my=innerHeight/2,cx=mx,cy=my,sc=0;addEventListener('pointerm
 function onS(){const d=document.documentElement;$('#pg').style.transform=`scaleX(${scrollY/Math.max(1,d.scrollHeight-innerHeight)})`;sc=scrollY;
 const a=$('#asc').getBoundingClientRect();if(a.height){const q=Math.max(0,Math.min(1,(innerHeight*.55-a.top)/a.height));$('#fill').style.height=q*100+'%'}}
 addEventListener('scroll',onS,{passive:true});onS();const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* Contact form -> Telegram (message pre-filled, user taps send) */
+const TGU='S_B_R_5';
+const CM={ar:{t:'ابدأ الاشتراك',s:'اكتب بياناتك وسنفتح لك تيليجرام والرسالة جاهزة، وكل ما عليك الضغط على إرسال.',n:'الاسم',p:'رقم الهاتف',k:'نوع الاشتراك',pick:'اختر نوع الاشتراك',go:'أرسل عبر تيليجرام',x:'إغلاق',e1:'الرجاء كتابة الاسم',e2:'رقم الهاتف غير صحيح',e3:'اختر نوع الاشتراك',ok:'تم نسخ رسالتك أيضًا',opts:['القناة العامة (مجانية)','قناة الاسكالبينج','قناة VIP','قناة الـ 100$','كورس SMC','إدارة الحسابات'],tpl:(n,p,k)=>`الاسم: ${n}\nرقم الهاتف: ${p}\nنوع الاشتراك: ${k}`},
+en:{t:'Start your subscription',s:'Enter your details and we’ll open Telegram with your message ready. Just tap send.',n:'Name',p:'Phone number',k:'Subscription type',pick:'Choose a subscription type',go:'Send via Telegram',x:'Close',e1:'Please enter your name',e2:'Phone number is not valid',e3:'Choose a subscription type',ok:'Your message was also copied',opts:['Public channel (free)','Scalping channel','VIP channel','The $100 channel','SMC course','Account management'],tpl:(n,p,k)=>`Name: ${n}\nPhone: ${p}\nSubscription: ${k}`}};
+function cmR(){const c=CM[L],f=$('#cf'),v=f?[f.n.value,f.p.value,f.k.selectedIndex]:['','',0];
+$('#cm .cb').innerHTML=`<button class="cx" type="button" aria-label="${c.x}">×</button><h3>${c.t}</h3><p class="mu">${c.s}</p><form id="cf" novalidate><label>${c.n}<input name="n" autocomplete="name"></label><label>${c.p}<input name="p" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="+971 5X XXX XXXX"></label><label>${c.k}<select name="k"><option value="">${c.pick}</option>${c.opts.map(o=>`<option>${o}</option>`).join('')}</select></label><div class="er" id="er" aria-live="polite"></div><button class="btn b1" type="submit">${c.go}</button></form>`;
+const g=$('#cf');g.n.value=v[0];g.p.value=v[1];g.k.selectedIndex=v[2]}
+function cmO(e){if(e)e.preventDefault();cmR();$('#cm').classList.add('o');setTimeout(()=>$('#cf').n.focus(),50)}
+function cmC(){$('#cm').classList.remove('o')}
+$('#cu').addEventListener('click',cmO);$('#fab').addEventListener('click',cmO);
+$('#cm').addEventListener('click',e=>{if(e.target.id=='cm'||e.target.closest('.cx'))cmC()});
+addEventListener('keydown',e=>{if(e.key=='Escape')cmC()});
+document.addEventListener('submit',e=>{const f=e.target;if(f.id!='cf')return;e.preventDefault();const c=CM[L],n=f.n.value.trim(),p=f.p.value.trim(),d=p.replace(/\D/g,''),er=$('#er');
+const bad=n.length<2?['n',c.e1]:(d.length<7||d.length>15||/[^\d+\s()-]/.test(p))?['p',c.e2]:f.k.selectedIndex<1?['k',c.e3]:null;
+if(bad){er.textContent=bad[1];f[bad[0]].focus();return}
+const m=c.tpl(n,p,c.opts[f.k.selectedIndex-1]);try{navigator.clipboard.writeText(m)}catch(x){}
+const w=window.open('https://t.me/'+TGU+'?text='+encodeURIComponent(m),'_blank','noopener');if(!w)location.href='https://t.me/'+TGU+'?text='+encodeURIComponent(m);
+const t=$('#toast');t.textContent=c.ok;t.classList.add('s');setTimeout(()=>t.classList.remove('s'),3000);setTimeout(cmC,500)});
+{const _s=setL;setL=function(l){_s(l);if($('#cm').classList.contains('o'))cmR()}}
